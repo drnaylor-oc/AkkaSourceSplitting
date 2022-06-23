@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream-contrib" % "0.11+4-91b2f9fa",
+  "com.typesafe.play" %% "play-ahc-ws-standalone" % "2.1.10",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 )
