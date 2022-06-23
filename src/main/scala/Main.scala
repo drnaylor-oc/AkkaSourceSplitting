@@ -43,12 +43,14 @@ object Main extends App {
 
     // We attach our subscribers, but they won't be getting any data yet. They are materialised independently,
     // which is perfect for attaching to WS/HMRC Verbs
-    val source1: Source[ByteString, _] = sourceToUse.fold(0)(_ + _).via(Flow.fromFunction((x: Int) => ByteString(x.toString)))
-    val source2: Source[ByteString, _] = sourceToUse.fold(0)((current, _) => current + 1).via(Flow.fromFunction((x: Int) => ByteString(x.toString)))
+    // val source1: Source[ByteString, _] = sourceToUse.fold(0)(_ + _).via(Flow.fromFunction((x: Int) => ByteString(x.toString)))
+    // val source2: Source[ByteString, _] = sourceToUse.fold(0)((current, _) => current + 1).via(Flow.fromFunction((x: Int) => ByteString(x.toString)))
+    val singleSource: Source[ByteString, _] = sourceToUse.via(Flow.fromFunction((x: Int) => ByteString(x.toString + " ")))
+
 
     // need to be done in parallel so must be outside the for comprehension
-    val call1 = ws.url("https://828kz.mocklab.io/identity").withBody(source1).execute("POST")
-    val call2 = ws.url("https://828kz.mocklab.io/identity2").withBody(source2).execute("POST")
+    val call1 = ws.url("https://828kz.mocklab.io/identity").withBody(singleSource).execute("POST")
+    val call2 = ws.url("https://828kz.mocklab.io/identity2").withBody(singleSource).execute("POST")
 
     val future = for {
       f1 <- call1
@@ -73,6 +75,6 @@ object Main extends App {
   }
 
   // Run and then terminate the actor system
-  run(source).flatMap(_ => actorSystem.terminate())
+  run(source).flatMap(_ => actorSystem.terminate()).map(_ => System.exit(0))
 
 }
